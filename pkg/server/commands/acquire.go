@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	ofcirv1 "github.com/openshift/ofcir/api/v1"
@@ -17,6 +18,21 @@ type acquireCmd struct {
 	clientset    *ofcirclientv1.OfcirV1Client
 	namespace    string
 	resourceType ofcirv1.CIResourceType
+}
+
+func contains(elems []string, v string) bool {
+	for _, s := range elems {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+
+func canUsePool(context *gin.Context, pool string) bool {
+	v, _ := context.Get("validpools")
+	validpools := strings.Split(fmt.Sprint(v), ",")
+	return contains(validpools, pool)
 }
 
 func NewAcquireCmd(c *gin.Context, clientset *ofcirclientv1.OfcirV1Client, ns string, resourceType string) command {
@@ -37,7 +53,7 @@ func (c *acquireCmd) Run() error {
 
 	poolsByName := make(map[string]ofcirv1.CIPool)
 	for _, p := range pools.Items {
-		if p.Spec.Type == c.resourceType {
+		if (p.Spec.Type == c.resourceType) && canUsePool(c.context, p.Name) {
 			poolsByName[p.Name] = p
 		}
 	}
