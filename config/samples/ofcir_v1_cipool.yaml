@@ -112,3 +112,14 @@ stringData:
       "endpoint": "https://172.22.0.3:6385",
       "image": "http://172.22.0.1/images/ofcir_image.qcow2"
     }
+
+---
+
+apiVersion: v1
+stringData:
+  testtoken: "cipool-fallback,cipool-fake,cipool-libvirt,cipool-ironic"
+kind: Secret
+metadata:
+  name: ofcir-tokens
+  namespace: default
+type: Opaque

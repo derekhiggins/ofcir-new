@@ -2,6 +2,9 @@
 
 # This script is for testing / debugging purpouses only
 
+
+TOKEN=${TOKEN:-testtoken}
+
 if [ $# -lt 1 ]; then
     echo "Please specify at least one command:"
     echo " - acquire <type>"
@@ -18,7 +21,7 @@ case $1 in
         if [ $# -eq 2 ]; then
             type="?type=$2"
         fi
-        res=$(curl -s -X POST http://localhost:8087/v1/ofcir${type})
+        res=$(curl -s -X POST -H "X-OFCIRTOKEN: $TOKEN" http://localhost:8087/v1/ofcir${type})
         echo $res
         ;;
 
@@ -27,7 +30,7 @@ case $1 in
             echo "Command requires <cir-id>"
             exit 1
         fi
-        res=$(curl -s http://localhost:8087/v1/ofcir/$2)
+        res=$(curl -s  -H "X-OFCIRTOKEN: $TOKEN" http://localhost:8087/v1/ofcir/$2)
         echo $res
         ;;
 
@@ -36,7 +39,7 @@ case $1 in
             echo "Command requires <cir-id>"
             exit 1
         fi
-        res=$(curl -s -X DELETE http://localhost:8087/v1/ofcir/$2)
+        res=$(curl -s -X DELETE  -H "X-OFCIRTOKEN: $TOKEN" http://localhost:8087/v1/ofcir/$2)
         echo $res
         ;;
 
